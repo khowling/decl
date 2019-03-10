@@ -1,0 +1,238 @@
+
+
+/* $line-height-text: 1.1;
+*/
+
+@import '~@salesforce-ux/design-system/scss/index.scss';
+
+
+.slds-global-header__logo {
+    width: 12.5rem;
+    height: 2.5rem;
+    background-image: url(/assets/images/Azure_logo_icon_50.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+
+
+/* Reference lookup field FIX, when in edit mode and a value has been selected */
+.slds-input[readonly] {
+    padding-left: 0.75rem;
+    border-color: #dddbda;
+    background-color: white;
+    font-size: inherit;
+    font-weight: 400;
+}
+
+ /*  layout */
+ .viewport {
+
+}
+ .site-banner {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 2.8rem;
+   z-index: 5;
+
+   background-color: #fff;
+   box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.15);
+   padding: 5px 10px;
+   color: black;
+   box-sizing: border-box;
+   -webkit-transition: top 0.3s;
+   transition: top 0.3s;
+ }
+
+ .container {
+   top: 2.8rem;
+   //height: calc(100% - 2.8rem);
+   left: 0;
+   right: 0;
+   position: absolute;
+    overflow: visible;
+    width: auto;
+    z-index: 0;
+    //background-color: white;
+    //background-color: rgb(244, 246, 249);
+ }
+
+[class*="text-heading--label"], .slds-max-medium-table--stacked-horizontal td:before {
+   font-size: 0.75rem;
+   text-transform: uppercase;
+}
+
+[class*="site-text-heading"] {
+   font-weight: 400;
+   line-height: 1.25;
+   color: #16325C;
+}
+
+.site-resources--landing .grid-card .hr {
+     margin: 0.75rem 0;
+     width: 100%;
+ }
+ .grid-card .hr {
+     margin-top: 0.35rem;
+ }
+ .hr--pink {
+     background-color: #FA9FBB;
+     background-image: -webkit-linear-gradient(left, rgba(250,159,187,0), #BF4C76);
+     background-image: linear-gradient(to right, rgba(250,159,187,0), #BF4C76);
+ }
+ .hr {
+     height: 1px;
+     border: none;
+     margin-left: auto;
+     margin-right: auto;
+     border-radius: 15rem;
+ }
+
+.grid-card {
+  padding: 1rem;
+
+  margin: 0.5rem;
+  background: #fff;
+  border-radius: 0.25rem;
+  border: 1px solid #d8dde6;
+  color: #5876A3;
+//     text-align: center;
+}
+
+ /* Picture with text */
+ .pic-with-text {
+   background-image: url(http://placehold.it/120x120);
+   background-repeat: no-repeat;
+   height: 200px ;
+   background-size: auto 200px;
+ }
+ .pic-with-text > header {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   background-color: rgba(84, 105, 141, 0.5);
+   color: white;
+ }
+
+ svg.header-icons {
+   fill: rgb(159, 170, 181);
+ }
+
+ /* icon */
+ .icon-utility {
+     cursor: pointer;
+     //fill: #0070d2;
+     fill: #54698d;
+     transition-property: transform;
+     transition-duration: 0.3s;
+     width: 1.2rem;
+     height: 1.2rem;
+ }
+ .icon-utility:hover, .icon-utility:focus, .icon-utility:active {
+   -webkit-transform: scale(1.1);
+   transform: scale(1.1);
+   fill: #005fb2;
+ }
+ /* shrink table rows, because reference fields make it to large */
+ .slds-table th, .slds-table td {
+     padding: 0.2rem;
+     white-space: nowrap;
+ }
+ td.slds-row-select {
+     padding: 0.5rem;
+     white-space: nowrap;
+ }
+ /* form */
+ div.field-seperator {
+   border-bottom: 1px solid rgb(216, 221, 230);
+ }
+ div.form-seperator {
+   border-bottom: 2px solid rgb(0, 112, 210);
+ }
+
+ div.w95 {
+   width: 95%;
+ }
+
+ /* login */
+ a.fbconnect_login_button {
+     cursor: pointer;
+     line-height: 16px;
+     display: inline-block;
+     padding: 0 0 0 1px;
+     text-decoration: none;
+ }
+
+ .fbconnect_login_button a:hover {
+     text-decoration : underline;
+ }
+
+ .FBConnectButton {
+     background: url("https://d1gw9egox2swwv.cloudfront.net/20111123b/images/facebook/connect_sprite.png") no-repeat scroll 0 0 #29447E;
+     cursor: default;
+     display: inline-block;
+     outline: medium none;
+     padding: 0 0 0 1px;
+     text-decoration: none;
+ }
+ .FBConnectButton .FBConnectButton_Text {
+     background: url("https://d1gw9egox2swwv.cloudfront.net/20111123b/images/facebook/connect_sprite.png") repeat scroll 0 0 #5F78AB;
+     border-bottom: 1px solid #1A356E;
+     border-top: 1px solid #879AC0;
+     color: #FFFFFF;
+     display: block;
+     font-family: "lucida grande",tahoma,sans-serif;
+     font-weight: bold;
+     margin: 1px 1px 0 0;
+     padding: 2px 6px 4px;
+     text-shadow: none;
+ }
+ .FBConnectButton_Large {
+     background-position: left -138px;
+     font-size: 13px;
+     line-height: 16px;
+ }
+ .FBConnectButton_Large .FBConnectButton_Text {
+     margin-left: 24px;
+ }
+ .FBConnectButton_Text {
+     margin-left: 21px;
+     padding: 2px 6px 3px;
+ }
+
+
+ .link-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    display: inline;
+    margin: 0;
+    padding: 0;
+  }
+
+.link-button:hover,
+.link-button:focus {
+  text-decoration: none;
+}
+
+.slds-dropdown__item > button {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    color: #080707;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.slds-dropdown__item > button:hover, .slds-dropdown__item > button:focus {
+    outline: 0;
+    text-decoration: none;
+    background-color: #f3f2f2;
+}
