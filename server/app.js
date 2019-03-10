@@ -65,6 +65,22 @@ const initapp = async () => {
     app.use(passport.initialize());
     app.use(passport.session());
 
+    // to handle passport deserialiation errors (ie if a logged in user is deleted)
+    app.use(function(err, req, res, next) {
+        console.log (`app use error ${err}`)
+        if (err) {
+            req.logout();
+            if (req.originalUrl === "/") {
+                next(); // never redirect login page to itself
+            } else {
+                req.flash("error", err.message);
+                res.redirect("/");
+            }
+        } else {
+            next()
+        }
+    })
+
     // routes
     // routes are the last thing to be initialised!
     app.use('/auth', require('./routes/auth')(passport, {db: db,  dbname: dbname}))

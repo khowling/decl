@@ -295,9 +295,9 @@ module.exports = function(options) {
 
   // reinflate the session context
   async function getAppForms(apporappid, req_user, reinflate = true) {
-    console.log (`getAppForms(): re-inflate application forms into 'context' [appid: ${apporappid._id}]`)
+    console.log (`getAppForms(): re-inflate application forms into 'context' [appid: ${apporappid && apporappid._id}]`)
     let app = apporappid,
-        ret = {appMeta: []}
+        ret = {}
 
     if (reinflate) {
       ret.user = req_user
@@ -331,37 +331,40 @@ module.exports = function(options) {
    */
   router.get('/loadApp', async function(req, res) {
     let urlappid = req.query["appid"],
-        sendtoclient = {user: undefined, app: undefined, appMeta: []}
+        sendtoclient = {}
 
     console.log (`/loadApp: [requested urlappid: ${urlappid}] [user: ${req.user ? req.user.name : 'none'}]`);
 
     try {
       // Calculate appid
       if (req.user) {
-        
+
+        sendtoclient.user = Object.assign({},req.user)
+
         console.log (`/loadApp: logged in user ${req.user.name}`)
         if (req.user.role === "admin") {
           console.log (`/loadApp: user is a admin, add the AdinApp to their apps list`)
-          req.user.apps.push({app: AdminApp});
+          if (!sendtoclient.user.apps) sendtoclient.user.apps = []
+          sendtoclient.user.apps.push({app: AdminApp});
         }
-        sendtoclient.user = req.user
+        
 
-        let requestedappid = undefined, userapps = req.user.apps  || [];
+        let requestedappid = undefined
         // if no urlappid specified, get the default appid from the user apps, or if the user is admin, get Admin app
         if (!urlappid) {
           console.log (`/loadApp: no app requested, find a default app that user has access to, if no default, get admin app`)
-          let userapp = userapps.find(ua => ua.defaultapp)
+          let userapp = sendtoclient.user.apps.find(ua => ua.defaultapp)
           requestedappid = userapp ? userapp.app._id : (req.user.role === "admin" ? AdminApp._id : null)
 
         } else {
           console.log (`/loadApp: specific app requested, insure user has permission to access the app`)
-          let userapp = userapps.find(ua => String(ua.app._id) === urlappid)
+          let userapp = sendtoclient.user.apps.find(ua => String(ua.app._id) === urlappid)
           if (!userapp) {
             return returnJsonError(res, `App requested not available : ${urlappid}`)
           }
           requestedappid = userapp.app._id
         }
-        if (requestedappid === String(AdminApp._id)) {
+        if (requestedappid === AdminApp._id) {
           sendtoclient.app = AdminApp
         } else {
           const app = await find({form: MetaFormsById[MetaFormIds.App]}, { _id: requestedappid})
@@ -370,17 +373,22 @@ module.exports = function(options) {
           }
         }
       } else {
-        // not logged on, get the default public app, unless requested
-
+        // not logged on, so must return public app
         let query = {"public_access": true}
         if (urlappid) {
-          query._id = urlappid
+          if (urlappid === AdminApp._id) {
+            return returnJsonError(res, `App requested not available : ${urlappid}`)
+          } else {
+            query._id = urlappid
+          }
         }
+
         // app requested, so provide it.
-        
         const app = await find({form: MetaFormsById[MetaFormIds.App]}, { q: query})
         if (app && app.length>0) {
           sendtoclient.app = app[0]
+        } else if (urlappid) {
+          return returnJsonError(res, `App requested not available : ${urlappid}`)
         }
       }
       // Genreate Attachment SAS
@@ -388,29 +396,33 @@ module.exports = function(options) {
       
       // get app forms 
       const context = await getAppForms(sendtoclient.app, undefined, false)
-      if (sendtoclient.app._id !== String(AdminApp._id)) {
-        context.appMeta.push(MetaFormsById[String(MetaFormIds.iconSearch)]); // non-admin apps that need to work with icons
-        context.appMeta.push(MetaFormsById[String(MetaFormIds.FormFieldMetadata)]); // required for dynamic fields
-        context.appMeta.push(MetaFormsById[String(MetaFormIds.DropDownOption)]); // Apps with forms with dropdown fields
+      if (context.appMeta) {
+        if (sendtoclient.app._id !== String(AdminApp._id)) {
+          context.appMeta.push(MetaFormsById[String(MetaFormIds.iconSearch)]); // non-admin apps that need to work with icons
+          context.appMeta.push(MetaFormsById[String(MetaFormIds.FormFieldMetadata)]); // required for dynamic fields
+          context.appMeta.push(MetaFormsById[String(MetaFormIds.DropDownOption)]); // Apps with forms with dropdown fields
 
-        //context.appMeta.push(MetaFormsById[String(MetaFormIds.App)]); // apps that need to work with users app-specific dynamic fields
-        //systemMeta.push(MetaFormsById[String(MetaFormIds.FileMeta)]); // apps that need to work with files
-        //systemMeta.push(MetaFormsById[String(MetaFormIds.iconSearch)]); // apps that need to work with icons
-        //systemMeta.push(MetaFormsById[String(MetaFormIds.Users)]); // apps that need to work with users
-        //systemMeta.push(MetaFormsById[String(MetaFormIds.AuthProviders)]); // apps that need to work user auth providers
-        //systemMeta.push(MetaFormsById[String(MetaFormIds.ComponentMetadata)]); // needed for the router props
-        //systemMeta.push(MetaFormsById[String(MetaFormIds.formMetadata)]); // required for the cloneSObject jexl Transform
-        
+          //context.appMeta.push(MetaFormsById[String(MetaFormIds.App)]); // apps that need to work with users app-specific dynamic fields
+          //systemMeta.push(MetaFormsById[String(MetaFormIds.FileMeta)]); // apps that need to work with files
+          //systemMeta.push(MetaFormsById[String(MetaFormIds.iconSearch)]); // apps that need to work with icons
+          //systemMeta.push(MetaFormsById[String(MetaFormIds.Users)]); // apps that need to work with users
+          //systemMeta.push(MetaFormsById[String(MetaFormIds.AuthProviders)]); // apps that need to work user auth providers
+          //systemMeta.push(MetaFormsById[String(MetaFormIds.ComponentMetadata)]); // needed for the router props
+          //systemMeta.push(MetaFormsById[String(MetaFormIds.formMetadata)]); // required for the cloneSObject jexl Transform
+          
 
+        }
+        sendtoclient.appMeta = context.appMeta
       }
-      sendtoclient.appMeta = context.appMeta
-      
-      req.session.context = {
-        app: sendtoclient.app ? {_id: sendtoclient.app._id} : undefined
+
+      if (sendtoclient.app) {
+        req.session.context = { app: {_id: sendtoclient.app._id}}
       }
+
       res.json(sendtoclient)
+
     } catch (e) {
-      return returnJsonError(res, `App requested not available : ${urlappid}`)
+      return returnJsonError(res, `App requested not available: ${urlappid} [${e}]`)
     }
   })
 

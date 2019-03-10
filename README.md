@@ -1,3 +1,12 @@
+### setup
+
+npm install
+mkdir public/assets
+cp -r node_modules/@salesforce-ux/design-system/assets/fonts src
+cp -r node_modules/@salesforce-ux/design-system/assets/icons public/assets
+cp -r node_modules/@salesforce-ux/design-system/assets/images public/assets
+
+
 ### Server
 
 orm_mongo.js

@@ -36,8 +36,12 @@ module.exports = function (passport, options) {
     passport.deserializeUser(function (id, done) {
         console.log(`passport.deserializeUser: find session User: calling find()`)
         find({form: UserForm}, {_id: id, display: 'all_no_system'}).then( user => {
-            console.log(`passport.deserializeUser: got user [${user.name}]`)
-            done(null, user)
+            if (user) {
+                console.log(`passport.deserializeUser: got user [${user.name}]`)
+                done(null, user)
+            } else {
+                done("Cannot find logged in user, may of been deleted")
+            }
         }, err => done(err))
     })
 
@@ -77,18 +81,24 @@ module.exports = function (passport, options) {
         // https://docs.mongodb.com/manual/tutorial/query-array-of-documents/
         find({form: UserForm}, {q: user_q_cosmos, display: "all_no_system"}).then((existinguser) => {
           const pobject = {type: provider, provider_id: provider_id, access_token: auth.access_token, refresh_token: auth.refresh_token, instance_url: auth.instance_url }
-          if (existinguser.length == 0) {
+          if (existinguser.length === 0) {
               mappedUserObj.provider = [pobject]
-              console.log(`auth.js - findAndUpdateUser: No existing user, creating from social profile`);
+              console.log(`auth.js - findAndUpdateUser: No existing user, creating from social profile`)
 
+              // new user, so creating new tenant
+              save ({form: MetaFormsById[String(MetaFormIds.Tenant)]}, {"name": mappedUserObj.email, "type": "trial"}).then(function success(tenant) {
               // exps.forms.AuthProviders
-              save ({form: UserForm}, mappedUserObj).then(function success(newuser) {
-                      console.log (`auth.js - findAndUpdateUser: Saved new user`);
-                      done(null, newuser);
-                  }, function error(ee) {
-                      console.log ('auth.js - findAndUpdateUser: Create user error: ' + ee);
-                      return done(null, false, 'error creating user');
-                  });
+                save ({form: UserForm}, {...mappedUserObj, "role": "admin", "tenant": {"_id": tenant._id}}).then(function success(newuser) {
+                        console.log (`auth.js - findAndUpdateUser: Saved new user`);
+                        done(null, newuser)
+                    }, function error(ee) {
+                        console.log ('auth.js - findAndUpdateUser: Create user error: ' + ee);
+                        return done(null, false, 'error creating user');
+                    })
+                }, (ee) => {
+                    console.log ('auth.js - findAndUpdateUser: Create Tenant error: ' + ee);
+                    return done(null, false, 'error creating Tenant');
+                })
           } else if (existinguser.length > 1) {
             console.log ("auth.js - findAndUpdateUser: ERROR - Found more than one user");
             return done(null, false, "ERROR - Found more than one user");
@@ -192,7 +202,6 @@ module.exports = function (passport, options) {
         
             return findAndUpdateUser({
                 name: idtoken_decoded.name,
-                role: "new",
                 email: idtoken_decoded.email
             }, "oauth2", idtoken_decoded.oid, {}, done);
         }
@@ -222,7 +231,6 @@ module.exports = function (passport, options) {
           console.log ('ForceDotComStrategy : got profile: ' + JSON.stringify(profile));
           return findAndUpdateUser({
               name: profile.name.givenName + ' ' + profile.name.familyName,
-              role: "new",
               email: profile.emails[0].value
             }, "chatter", profile.id, Object.assign({refresh_token: refreshToken}, auth.params), done);
         }
@@ -239,7 +247,6 @@ module.exports = function (passport, options) {
             console.log ('FacebookStrategy : got profile: ' + JSON.stringify(profile));
             return findAndUpdateUser({
                 name: profile.name.givenName + ' ' + profile.name.familyName,
-                role: "new",
                 email: profile.emails[0].value
             }, "facebook", profile.id, {access_token: auth}, done);
         }

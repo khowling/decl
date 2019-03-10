@@ -160,9 +160,9 @@ export async function _formControlState(context, mode, form, existing_rec = {}, 
                   fctrl.error = `Reference field without defined search_form: ${fld.name}`
                 else if (mode === 2) {
                   try {
-                    fctrl.validated_value = {_id: sform.store === "mongo"? mongoObjectId.createFromHexString(fval._id) : fval._id} 
+                    fctrl.validated_value = {_id: sform.store === "mongo"? new mongoObjectId(fval._id) : fval._id} 
                   } catch (e) {
-                    fctrl.error = `Invalid _id: ${fld.name}: ${fval._id}`
+                    fctrl.error = `Invalid _id: ${fld.name}: ${fval._id} (${e})`
                   }
                 }
               } catch (e) {

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { Alert, Waiting } from './components/utils.jsx'
-import {useRouter, ensureAppInUrl, decodeCurrentURI} from './components/router.jsx'
+import {useRouter, ensureAppInUrl, navTo} from './components/router.jsx'
 import {PageHeader} from './components/headers.jsx'
 import DynamicForm from './services/dynamicForm.js'
 
@@ -20,23 +20,30 @@ export default ({appid}) => {
     _loadApp(appid)
   }, [])
 
-  function _loadApp(appid) {
-    console.log (`App: _loadApp with appid: ${appid}`)
-    if (appid === '_') {
+  function _loadApp(requested_appid) {
+    console.log (`App: _loadApp([requested_appid: ${requested_appid}])`)
+    if (requested_appid === '_') {
       /* render the pages with no app (Login) */
       setAppState({ booted: true, booterr: false, bootmsg: null, loadedApp: {}})
     } else {
-      df.loadApp(appid).then (() => {
+      df.loadApp(requested_appid).then (() => {
         if (!df.app) {
-          setAppState({ booted: false, booterr: true, booterr_appid: appid, bootmsg: 'Error loading app : ' + appid, loadedApp: {}});
+          if (!requested_appid) {
+            // requested server to load 'default' app, server didnt find any app avaiable, so just redirect to login page
+            window.location.href = "/_/Login"
+          } else {
+            setAppState({ booted: false, booterr: true, booterr_appid: requested_appid, bootmsg: 'Error loading app : ' + requested_appid, loadedApp: {}})
+          }
         } else {
           console.log (`App: _loadApp: got app from server "${df.app._id}" ensureAppInUrl, then setAppState`);
-          if (!appid) ensureAppInUrl (df.app._id)
+          if (!requested_appid) {
+            ensureAppInUrl (df.app._id)
+          }
           setAppState({ booted: true, booterr: false, bootmsg: null, user: df.user, loadedApp: df.app})
         }
       }, (e) => {
         console.error(`Error loading app: ${e.error}`)
-        setAppState({ booted: false, booterr: true, booterr_appid: appid, bootmsg: `Error loading app: ${e.error}`, loadedApp: {}})
+        setAppState({ booted: false, booterr: true, booterr_appid: requested_appid, bootmsg: `Error loading app: ${e.error}`, loadedApp: {}})
       })
     }
   }

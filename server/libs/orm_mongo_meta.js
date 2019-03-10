@@ -94,6 +94,7 @@ const MetaFormIds = {
     "FormFieldMetadata": new ObjectID('000000000200'),
     "DropDownOption": new ObjectID('000000000250'),
     "iconSearch": new ObjectID('000000000300'),
+    "Tenant": new ObjectID('000000000350'),
     "Users": new ObjectID('000000000600'),
     "AuthProviders": new ObjectID('000000000700'),
     "FileMeta": new ObjectID('000000000800'),
@@ -609,6 +610,50 @@ const MetaFormsArray = [
         _data: ICONS
     },
     {
+        _id: MetaFormIds.Tenant,
+        name: "Tenants",
+        desc: "Tenants in your instance",
+        collection: "tenant",
+        store: "mongo",
+        icon: {_id:"std88"},
+        fields: [
+
+            {
+                name: "name",
+                display: "primary",
+                title: "Tenant Name",
+                type: "text",
+                placeholder: "",
+                required: true
+            },
+            {
+                name: "type",
+                title: "Tenant type",
+                type: "dropdown",
+                required: true,
+                default_value: "trial",
+                dropdown_options: [
+                    {
+                        name: "Trial",
+                        key: "trial"
+                    },
+                    {
+                        name: "Restricted",
+                        key: "restricted"
+                    },
+                    {
+                        name: "Unlimited",
+                        key: "unlimited"
+                    },
+                    {
+                        name: "Developer",
+                        key: "developer"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         _id: MetaFormIds.Users,
         name: "Users",
         desc: "This is all the users that can logon to your applications",
@@ -641,7 +686,7 @@ const MetaFormsArray = [
                         key: "user"
                     },
                     {
-                        name: "Team Manager",
+                        name: "Manager",
                         key: "manager"
                     },
                     {
@@ -664,6 +709,15 @@ const MetaFormsArray = [
                 title: "Picture",
                 type: "image",
                 required: false
+            },
+            {
+                name: "tenant",
+                display: "list",
+                title: "Tenant",
+                type: "reference",
+                search_form: { _id: MetaFormIds.Tenant},
+                required: true,
+                _id: new ObjectID('000000000602')
             },
             {
                 name: "provider",
@@ -1046,6 +1100,7 @@ const AdminApp = {
     {form: {_id: MetaFormIds.ComponentMetadata}, crud: "crud"},
     {form: {_id: MetaFormIds.FormFieldMetadata}, crud: "crud"},
     {form: {_id: MetaFormIds.DropDownOption}, crud: "crud"},
+    {form: {_id: MetaFormIds.Tenant}, crud: "crud"},
     {form: {_id: MetaFormIds.Users}, crud: "crud"},
     {form: {_id: MetaFormIds.AuthProviders}, crud: "crud"},
     {form: {_id: MetaFormIds.UserApps}, crud: "crud"},
@@ -1063,7 +1118,7 @@ const AdminApp = {
         component: {_id: "TileList"},
         title: "Admin Tile List",
         props: {
-            formids: [MetaFormIds.formMetadata, MetaFormIds.Users, MetaFormIds.App, MetaFormIds.ComponentMetadata, MetaFormIds.ImportMeta]
+            formids: [MetaFormIds.formMetadata, MetaFormIds.Users, MetaFormIds.App, MetaFormIds.ComponentMetadata, MetaFormIds.Tenant, MetaFormIds.ImportMeta]
         }
         }
     ]
