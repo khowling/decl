@@ -175,7 +175,10 @@ export default class DynamicForm {
 
   loadApp(appid) {
     this.clearApp();
-    return this._callServer(`${this.ROUTES.api}/loadApp/${(appid ? ("?appid=" + appid) : '')}`).then(val => {
+    const url = new URL(window.location),
+        url_part = url.searchParams.get ("part")
+
+    return this._callServer(`${this.ROUTES.api}/loadApp/${appid ? ("?appid="+appid) : ""}${(appid && url_part)? "&part="+url_part: ""}`).then(val => {
       this._appMeta = val.appMeta || [];
       this._user = val.user;
       this._currentApp = val.app;

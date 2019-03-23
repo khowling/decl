@@ -7,6 +7,20 @@ cp -r node_modules/@salesforce-ux/design-system/assets/icons public/assets
 cp -r node_modules/@salesforce-ux/design-system/assets/images public/assets
 
 
+### tenants
+
+partition = 0 = "instance tenant"
+ - unauthenticated users, with no tenant identifier
+    - Register
+    - Login
+    - Default landing app - marketing
+    - App Store app?
+- users!
+
+
+partition >0 = "tenant data"
+    - 
+
 ### Server
 
 orm_mongo.js

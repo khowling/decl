@@ -83,3 +83,12 @@ export function Waiting({msg}) {
   </div>
   )
 }
+
+export function Error({msg}) {
+  return (
+  <div>
+      <Alert message={msg}/>
+      <div className="slds-align--absolute-center" style={{"marginTop": "50px"}}><span className="slds-badge"><a href="/">Return to Home</a></span></div>
+    </div>
+  )
+}

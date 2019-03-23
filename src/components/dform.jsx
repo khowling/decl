@@ -216,28 +216,30 @@ export function FormMain ({form, crud, value, parent, parentrec, onComplete, onF
               else if (fc.visible) 
                 return (<FieldWithLabel key={i} field={field} value={record[field.name]} edit={edit} invalid={fc.error} onChange={(...d) => _fieldChange(undefined,...d)}/>)
             } else  {
-              const d_record = Object.assign({}, value?  value.record[field.name] : {}, new_change_rec[field.name])
-              console.log (`dynamic field ${field.name}, dflds : ${JSON.stringify(value?  value.record[field.name] : {})}`);
-              return (
-                <div key={field.name} className="slds-col--padded slds-size--2-of-2 ">
-                  <div className="slds-form-element">
-                    <label className="slds-form-element__label form-element__label--small">{field.title}</label>
-                    <div className="slds-box " style={{"padding": "0 0 12px 0"}}>
-                      <div className="slds-grid slds-wrap">
-                        {
-                          fc.error? 
-                            <Alert message={`dynamic field expression error ${fc.error}`}/> 
-                          :
-                            fc.dynamic_fields && fc.dynamic_fields.map(function(dfield, i) {
-                            let fc = formctl.flds[field.name].flds[dfield.name]? formctl.flds[field.name].flds[dfield.name] : {visible: true, invalid: false}
-                            return  (<FieldWithLabel key={i} field={dfield} value={d_record[dfield.name]} edit={edit} invalid={fc.error} onChange={(...d) => _fieldChange(field.name, ...d)}/>);
-                          })
-                        }
+              if (fc.dynamic_fields || fc.error) {
+                const d_record = Object.assign({}, value?  value.record[field.name] : {}, new_change_rec[field.name])
+                console.log (`dynamic field ${field.name}, dflds : ${JSON.stringify(value?  value.record[field.name] : {})}`);
+                return (
+                  <div key={field.name} className="slds-col--padded slds-size--2-of-2 ">
+                    <div className="slds-form-element">
+                      <label className="slds-form-element__label form-element__label--small">{field.title}</label>
+                      <div className="slds-box " style={{"padding": "0 0 12px 0"}}>
+                        <div className="slds-grid slds-wrap">
+                          {
+                            fc.error? 
+                              <Alert message={`dynamic field expression error ${fc.error}`}/> 
+                            :
+                              fc.dynamic_fields && fc.dynamic_fields.map(function(dfield, i) {
+                              let fc = formctl.flds[field.name].flds[dfield.name]? formctl.flds[field.name].flds[dfield.name] : {visible: true, invalid: false}
+                              return  (<FieldWithLabel key={i} field={dfield} value={d_record[dfield.name]} edit={edit} invalid={fc.error} onChange={(...d) => _fieldChange(field.name, ...d)}/>);
+                            })
+                          }
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )
+                )
+              }
             }
             return (null)
           })}

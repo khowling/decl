@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import DynamicForm from '../services/dynamicForm.js';
-import {Alert} from './utils.jsx';
+import {Alert, Error} from './utils.jsx';
 import {TileList} from './tiles.jsx'
 import {ListMain, ListPage, RecordPage}  from './dform.jsx'
 //import {TimeLine} from './timeline.jsx'
@@ -130,19 +130,21 @@ export function useRouter (booted, loadedApp, newAppRequestedFn) {
   const [renderRoute, setRenderRoute] = useState()
   //const df = DynamicForm.instance
 
-  console.log (`useRouter: called with: loadedApp:${loadedApp._id} [state: renderRoute : ${JSON.stringify(renderRoute)}]`)
-  
+  console.log (`useRouter([booted: ${booted}, loadedApp: ${loadedApp && loadedApp.name}]): called.  [state: renderRoute : ${JSON.stringify(renderRoute)}]`)
+
   // Subscribe to <Link> events
   useEffect(() => {
-    console.log ('useRouter: useEffect listeners (listen for <Link>)')
+    console.log ('useRouter: useEffect - initialise listeners to listen for <Link>)')
     listeners.push(newrouteRequested => setRenderRoute(newrouteRequested))
     return () => listeners.pop()
   },[])
 
+
   const chnRouteFn = (event) =>  setRenderRoute(decodeCurrentURI())
+
   // Subscribe to popstate events (browser back/forward buttons)
   useEffect(() => {
-    console.log ('useRouter: useEffect- popstate (listen for browser back/forward)')
+    console.log ('useRouter: useEffect - initialise listeners to listen for popstate (browser back/forward)')
     window.addEventListener('popstate', chnRouteFn, false)
     //chnRouteFn()
     return () => { window.removeEventListener('popstate', chnRouteFn, false)}
@@ -150,8 +152,9 @@ export function useRouter (booted, loadedApp, newAppRequestedFn) {
 
 
   useEffect(() => {
-    console.log (`useRouter: useEffect- new loadedApp parameter (${loadedApp._id}), (booted:${booted}) decode url & setRenderRoute`)
+    console.log (`useRouter: useEffect - new value for [loadedApp: ${loadedApp && loadedApp.name}] or [booted: ${booted}]`)
     if (booted) {
+      console.log (`useRouter: useEffect - Application is booted, so decode url & setRenderRoute`)
       chnRouteFn()
     }
   }, [loadedApp._id, booted])
@@ -178,7 +181,7 @@ export function useRouter (booted, loadedApp, newAppRequestedFn) {
 
       //  console.log (`Router: rendering components : ${JSON.stringify(comps)}`);
       if (Object.keys(comps).length === 0) {
-        comps =  {main: <Alert message="404 - No landing page defined for app" alert={true}/>}
+        comps =  {main: <Error msg="404 - No landing page defined for app" alert={true}/>}
       }
 
     } else if (renderRoute.component) { // got a component in the url, (app or not)
@@ -188,11 +191,12 @@ export function useRouter (booted, loadedApp, newAppRequestedFn) {
         //console.log (`Router: render: component ${this.state.renderRoute.component} with props ${JSON.stringify(this.state.renderRoute.props)}`);
         comps = {main: cf(Object.assign({key: JSON.stringify(renderRoute.props)}, renderRoute.props))}
       } else {
-        comps = {main: <Alert message={"404 - Unknown Compoent " + renderRoute.component} alert={true}/>}
+        comps = {main: <Error msg={"404 - Unknown Compoent " + renderRoute.component}/>}
       }
     } else {
-      console.error ("404 - No Compoent Specified")
-      comps = {main: <Alert message={"404 - No Compoent Specified"} alert={true}/>}
+      console.warn ("renderComponents() - No app loaded and no compoent specified on url, return Login")
+      comps = {main: <Login/>}
+      //comps = {main: <Alert message={"404 - No Compoent Specified"} alert={true}/>}
     }
     return comps
   }

@@ -829,6 +829,15 @@ const MetaFormsArray = [
                 _id: new ObjectID('000000000901')
             },
             {
+                name: "tenant",
+                display: "list",
+                title: "Tenant",
+                type: "reference",
+                search_form: { _id: MetaFormIds.Tenant},
+                required: true,
+                _id: new ObjectID('000000000902')
+            },
+            {
                 name: "defaultapp",
                 title: "Default App",
                 type: "boolean"
@@ -1093,6 +1102,7 @@ const MetaFormsArray = [
 const AdminApp = {
     _id: "admin",
     name: "Admin App",
+    icon: {_id: "std29"},
     type: "deployed",
     public_access: false,
     appperms: [
@@ -1140,7 +1150,9 @@ return MetaFormsArray.find(m => fname === String(m.name)) || (context && context
 module.exports = {
     MetaFormIds,
     MetaFormsArray,
-    MetaFormsById: MetaFormsArray.reduce((acc, curr) => {return Object.assign({},acc, {[String(curr._id)]: curr}) }, {}),
+    MetaFormsById: MetaFormsArray.reduce((acc, curr) => {
+        console.log (`processing [${curr._id} : ${curr.name}]`)
+        return Object.assign({},acc, {[String(curr._id)]: curr}) }, {}),
     AdminApp,
     findForm,
     findFormByName

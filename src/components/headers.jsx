@@ -30,17 +30,21 @@ function HeaderPopup({offset, closefn, user, logoutFn, notifications}) {
       <article className="slds-tile slds-media">
         <div className="slds-media__figure">
           <span className="slds-avatar slds-avatar_circle slds-avatar_medium">
-            <img alt="" src="/assets/images/avatar2.jpg" title="Lexee L. Jackson avatar" />
+            <img alt="" src="/assets/images/avatar2.jpg" />
           </span>
         </div>
         <div className="slds-media__body">
-          <h3 className="slds-tile__title slds-truncate" title="Lexee L. Jackson">
-            <Link onClick={close} component="RecordPage" formid="303030303030303030363030" recordid={user._id}>{user.name}</Link>
+          <h3 className="slds-tile__title slds-truncate">
+            <Link onClick={close} appid="admin" component="RecordPage" formid="303030303030303030363030" recordid={user._id}>{user.name}</Link>
           </h3>
           <div className="slds-tile__detail">
             <dl className="slds-list_horizontal slds-wrap">
-              <dt className="slds-item_label slds-text-color_weak slds-truncate" title="First Label">First Label:</dt>
-              <dd className="slds-item_detail slds-truncate" title="Description for first label"><button onClick={logoutFn} className="link-button" style={{"width":"100%"}}>logout</button></dd>
+              <dt className="slds-item_label slds-text-color_weak slds-truncate" title="First Label">Role:</dt>
+              <dd className="slds-item_detail slds-truncate" title="Description for first label">{user.role}</dd>
+              <dt className="slds-item_label slds-text-color_weak slds-truncate" title="First Label">Tenant:</dt>
+              <dd className="slds-item_detail slds-truncate" title="Description for first label"><Link onClick={close} appid="admin" component="RecordPage" formid="303030303030303030333530" recordid={user.tenant && user.tenant._id}>{user.tenant && user.tenant.name}</Link></dd>
+              <dt className="slds-item_label slds-text-color_weak slds-truncate" title="First Label"></dt>
+              <dd className="slds-item_detail slds-truncate" title="Description for first label"><button onClick={logoutFn} className="link-button" style={{"color": "#006dcc", "textDecoration": "none", "transition": "color 0.1s linear"}}>Log out</button></dd>
              
             </dl>
           </div>
@@ -48,39 +52,40 @@ function HeaderPopup({offset, closefn, user, logoutFn, notifications}) {
       </article>
     </div>,
 
-    <header key="3" className="slds-popover__header">
-      <h2 className="slds-text-heading_small">Apps</h2>
-    </header>,
 
-    <div key="4" className="slds-popover__body slds-p-around_none">
-      <ul>
-      { user.apps && user.apps.map(function(val, i) { return (
-         
-        <li key={i} className="slds-global-header__notification slds-global-header__notification_unread">
-          <div className="slds-media slds-has-flexi-truncate slds-p-around_x-small">
-            <div className="slds-media__figure">
-              <span className="slds-avatar slds-avatar_small">
-                <IconField value={val.app.icon} small={true}/>
-              </span>
+
+
+    <div key="3" className="slds-popover__body slds-p-horizontal_none" id="dialog-body-id-16">
+      <div id="listbox-unique-id" role="listbox">
+        <ul className="slds-listbox slds-listbox_vertical slds-dropdown_length-10" role="group" aria-label="App Selector">
+          <li role="presentation" className="slds-listbox__item">
+            <div className="slds-media slds-listbox__option slds-listbox__option_plain" role="presentation">
+              <h3 className="slds-listbox__option-header" role="presentation">App Selector</h3>
             </div>
-            <div className="slds-media__body">
-              <div className="slds-grid slds-grid_align-spread">
-                <Link appid={val.app._id} className="slds-text-link_reset slds-has-flexi-truncate">
-                  <h3 className="slds-truncate" title="Val Handerly mentioned you">
-                    <strong>{val.app.name}</strong>
-                  </h3>
-                  <p className="slds-truncate" title="@jrogers Could I please have a review on my presentation deck">{val.app.type}</p>
-                  
-                </Link>
+          </li>
+          { user.apps && user.apps.map(function(val, i) { return (
+            <li key={i} role="presentation" className="slds-listbox__item">
+            <Link appid={val.app._id} className="slds-text-link_reset slds-has-flexi-truncate">
+              <div id="listbox-option-id-20" className="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta">
+                <span className="slds-media__figure">
+                  <span className="slds-icon_container slds-icon-standard-account">
+                    <svg className="slds-icon slds-icon_small" aria-hidden="true">
+                      <IconField value={val.app.icon} small={true}/>
+                    </svg>
+                  </span>
+                </span>
+                <span className="slds-media__body">
+                  <span className="slds-listbox__option-text slds-listbox__option-text_entity">{val.app.name}</span> 
+                  <span className="slds-listbox__option-meta slds-listbox__option-meta_entity">{val.app.type}</span>
+                </span>
               </div>
-            </div>
-          </div>
-        </li>
-        
-      )})}
-
-      </ul>
+              </Link>
+            </li>
+          )})}
+        </ul>
+      </div>
     </div>,
+
     ]
 
     : [
@@ -162,7 +167,7 @@ export function PageHeader({ currentApp, user, logoutFn }) {
       <div className="slds-global-header slds-grid slds-grid_align-spread">
         <div className="slds-global-header__item">
         <Link className="slds-icon-waffle_container slds-context-bar__button">
-          <div className="slds-global-header__logo"></div>
+          {currentApp && currentApp.name || 'home'}
           </Link>
         </div>
         <div className="slds-global-header__item slds-global-header__item_search">
@@ -198,8 +203,8 @@ export function PageHeader({ currentApp, user, logoutFn }) {
                               </span>
                             </span>
                             <span className="slds-media__body">
-                              <span className="slds-listbox__option-text slds-listbox__option-text_entity">Salesforce - 1,000 Licenses</span>
-                              <span className="slds-listbox__option-meta slds-listbox__option-meta_entity">Opportunity • Propecting</span>
+                              <span className="slds-listbox__option-text slds-listbox__option-text_entity">bla</span>
+                              <span className="slds-listbox__option-meta slds-listbox__option-meta_entity">bla</span>
                             </span>
                           </div>
                         </li>

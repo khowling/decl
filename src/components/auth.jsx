@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {FormMain} from './dform.jsx'
 import DynamicForm from '../services/dynamicForm.js';
@@ -85,38 +84,3 @@ export function Login() {
     </div>
   )
 }
-
-/*
-export class AuthState extends Component {
-  _changeapp(appid) {
-    this.props.onchange(appid);
-  }
-
-  render () {
-    if (this.props.user)
-      return (
-        <div className="slds-dropdown-trigger" aria-haspopup="true">
-            <div className="slds-button slds-button--neutral">
-              {this.props.user.name} ({this.props.currentApp.name}) <SvgIcon classOverride="header-icons" small={true} spriteType="utility" spriteName="down"/>
-            </div>
-            <div className="slds-dropdown slds-dropdown--nubbin-top slds-dropdown--menu" style={{left: "35%"}}>
-             <ul className="slds-dropdown__list" role="menu">
-               { this.props.user.apps && this.props.user.apps.map(function(val, i) { return (
-               <li key={i} className="slds-dropdown__item" style={{whiteSpace: "nowrap"}} role="menuitem">
-                   <a href={Router.URLfor(val.app._id)} className="slds-truncate">{val.app.name}</a>
-               </li>
-             );})}
-               <li className="slds-dropdown__item" role="menuitem">
-                 <a href={Router.URLfor(true,"RecordPage", "303030303030303030363030", this.props.user._id)} className="slds-truncate">my profile</a>
-               </li>
-               <li className="slds-dropdown__item" role="menuitem">
-                 <button onClick={this.props.onLogout} className="link-button" style={{"width":"100%"}}>logout</button>
-               </li>
-             </ul>
-           </div>
-         </div>);
-    else
-      return <div><a href={Router.URLfor(true,"Login")}>Login</a> ({this.props.currentApp ? this.props.currentApp.name : ""})</div>;
-  }
-}
-*/

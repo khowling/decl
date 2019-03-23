@@ -1,16 +1,18 @@
 import React, {useState, useEffect} from 'react'
-import { Alert, Waiting } from './components/utils.jsx'
+import { Alert, Waiting, Error } from './components/utils.jsx'
 import {useRouter, ensureAppInUrl, navTo} from './components/router.jsx'
 import {PageHeader} from './components/headers.jsx'
 import DynamicForm from './services/dynamicForm.js'
 
 
-export default ({appid}) => {
-  console.log (`App(${appid}) called`)
+export default function ({appid}) {
+  
   // we recommend to split state into multiple state variables based on which values tend to change together.
   const df = DynamicForm.instance
   const [ appState, setAppState] = useState ({user: null, loadedApp: {}, booted: false, booterr: false,  bootmsg: "Loading...."})
   const { head, side, main, foot } = useRouter (appState.booted, appState.loadedApp, newAppRequestedFn)
+
+  console.log (`App([appid: ${appid}]) called. [appState.loadedApp: ${JSON.stringify(appState.loadedApp && appState.loadedApp.name)}]`)
 
   // think of useEffect Hook as componentDidMount, componentDidUpdate, and componentWillUnmount combined
   // Think of effects as an escape hatch from React’s purely functional world into the imperative world
@@ -35,7 +37,7 @@ export default ({appid}) => {
             setAppState({ booted: false, booterr: true, booterr_appid: requested_appid, bootmsg: 'Error loading app : ' + requested_appid, loadedApp: {}})
           }
         } else {
-          console.log (`App: _loadApp: got app from server "${df.app._id}" ensureAppInUrl, then setAppState`);
+          console.log (`App: _loadApp: got app from server "${df.app._id}" ensureAppInUrl, then setAppState(booted:true)`);
           if (!requested_appid) {
             ensureAppInUrl (df.app._id)
           }
@@ -55,11 +57,12 @@ export default ({appid}) => {
   }
 
   function _logout() {
-    //console.log ('App: _logout router noitified');
+    console.log ('App: _logout() called - logout server session')
     df.logOut().then(succ => {
-      setAppState({ booted: false, booterr: false, user: null, loadedApp: {}})
-      window.location.href = "/_/Login"
-      _loadApp (null);
+      console.log ('App: _logout() - successfully logged out server session, now redirect to /_/Login')
+      //setAppState({ booted: false, booterr: false, user: null, loadedApp: {}})
+      window.location.href =  "/" // "/_/Login"
+      //_loadApp (null);
     });
   }
 
@@ -89,10 +92,7 @@ export default ({appid}) => {
       </section>
     </div>
   ); else if (appState.booterr) return (
-    <div>
-      <Alert message={"User/App is not correctly configured, please email the system ower with this message:  " + appState.bootmsg}/>
-      <div className="slds-align--absolute-center" style={{"marginTop": "50px"}}><span className="slds-badge"><a href="/">Return to Home</a></span></div>
-    </div>
+    <Error msg={appState.bootmsg}/>
   ); else return (
     <Waiting msg={appState.bootmsg}/>
   )

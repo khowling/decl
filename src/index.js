@@ -6,7 +6,7 @@ import './index.css';
 import './styles/main.scss';
 
 /* microsoft mwf theme  */
-import './styles/mwf-west-european-default.min.css'
+//import './styles/mwf-west-european-default.min.css'
 
 
 import App from './App';
