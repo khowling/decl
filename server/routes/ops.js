@@ -29,45 +29,51 @@ router.put('/op/:operation', async function (req, res) {
     if (!userdoc || !userdoc.id)
         return returnJsonError(res, `No App ID provided`)
 
-    // InflateContext, BUT using the app to be exported & no user!
-    const appctx = await inflateContext({...req.session.context, app: {_id: userdoc.id}})
+    if (op === "saveapp") {
+        // InflateContext, BUT using the app to be exported & no user!
+        const appctx = await inflateContext({...req.session.context, app: {_id: userdoc.id}})
 
-    const APPS_CONTAINER = "publishedapps",
-            filename = appctx.app.name// encodeURIComponent(appctx.app.name)
-    const {container_url, sas} = createServiceSAS(process.env.STORAGE_SIGN_KEY, process.env.STORAGE_ACC, APPS_CONTAINER, 60, filename) 
-
-
-    const post_req = https.request(`${container_url}/${filename}?${sas}`, {
-        method: 'PUT',
-        headers: {
-            "x-ms-version": "2018-03-28",
-            "x-ms-blob-type": "BlockBlob",
-            "x-ms-blob-content-type": 'application/json',
-            'Content-Length': Buffer.byteLength(JSON.stringify(appctx))
-        }}, (postres) => {
+        const APPS_CONTAINER = "publishedapps",
+                filename = appctx.app.name// encodeURIComponent(appctx.app.name)
+        const {container_url, sas} = createServiceSAS(process.env.STORAGE_SIGN_KEY, process.env.STORAGE_ACC, APPS_CONTAINER, 60, filename) 
 
 
-            if(!(postres.statusCode === 200 || postres.statusCode === 201)) {
-                //console.log (`${res.statusCode} : ${res.statusMessage}`)
-                return res.json({error: postres.statusCode, message: postres.statusMessage})
-            }
+        const post_req = https.request(`${container_url}/${filename}?${sas}`, {
+            method: 'PUT',
+            headers: {
+                "x-ms-version": "2018-03-28",
+                "x-ms-blob-type": "BlockBlob",
+                "x-ms-blob-content-type": 'application/json',
+                'Content-Length': Buffer.byteLength(JSON.stringify(appctx))
+            }}, (postres) => {
 
-            let rawData = '';
-            postres.on('data', (chunk) => {
-                //console.log (`list_things got data ${chunk}`)
-                rawData += chunk
-            })
 
-            postres.on('end', () => {
-                //console.log (`list_things got end ${rawData}`)
-                return res.json({container_url: container_url, filename: filename})
+                if(!(postres.statusCode === 200 || postres.statusCode === 201)) {
+                    //console.log (`${res.statusCode} : ${res.statusMessage}`)
+                    return res.json({error: postres.statusCode, message: postres.statusMessage})
+                }
 
-            })
+                let rawData = '';
+                postres.on('data', (chunk) => {
+                    //console.log (`list_things got data ${chunk}`)
+                    rawData += chunk
+                })
 
-            
-        }).on('error', (e) =>  res.json({code: 'error', message: e}));
-    post_req.write(JSON.stringify(appctx))
-    post_req.end()
+                postres.on('end', () => {
+                    //console.log (`list_things got end ${rawData}`)
+                    return res.json({container_url: container_url, filename: filename})
+
+                })
+
+                
+            }).on('error', (e) =>  res.json({code: 'error', message: e}));
+        post_req.write(JSON.stringify(appctx))
+        post_req.end()
+    } else if (op === "restoreapp") {
+        
+    }
+
+
 })
 
 module.exports = router

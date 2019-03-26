@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from './router.jsx';
-import {FieldDate, FieldImage} from './dform_fields.jsx';
+import {FieldDate, FieldAttachment} from './dform_fields.jsx';
 import DynamicForm from '../services/dynamicForm.js';
 
 
@@ -47,7 +47,7 @@ export function UpdatedBy ({user, date}) {
     <span className=" slds-form-element__static">
       {userform && 
       <Link component="RecordPage" formid={userform._id} recordid={user._id} className="slds-pill__label">
-        <FieldImage value={user.picture} inlist={true} />
+        <FieldAttachment value={user.picture} inlist={true} />
         <span style={{"marginLeft": "5px"}}></span>
         <span>{user.name}, <FieldDate value={date}/></span>
       </Link>

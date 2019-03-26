@@ -39,7 +39,7 @@ jexl.addTransform('storeinblob', async function(id) {
   console.log (`running storeinblob`)
   const df = DynamicForm.instance
   try {
-    const res = await df._callServer(`${df.ROUTES.api}/op/storeinblob`, "PUT", {id})
+    const res = await df._callServer(`${df.ROUTES.api}/op/saveapp`, "PUT", {id})
     console.log (res)
     return res
   } catch (e) {

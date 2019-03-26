@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import DynamicForm from '../services/dynamicForm.js'
 import {Modal, SvgIcon, Alert, UpdatedBy, Waiting } from '../components/utils.jsx'
 import { Link} from '../components/router.jsx'
-import {FieldImage} from '../components/dform_fields.jsx'
+import {FieldAttachment} from '../components/dform_fields.jsx'
 import {ListMain, FormMain}       from '../components/dform.jsx';
 
 export function ECOMPage({form, query}) {
@@ -254,7 +254,7 @@ function Item({form, item, badge}) {
     return (
         <section className="m-content-placement-item f-size-large">
             <picture>
-                <FieldImage value={item.thumb}/>
+                <FieldAttachment value={item.thumb}/>
             </picture>
             <div>
                 { badge && <strong className="c-badge f-small f-highlight">BADGE</strong> }

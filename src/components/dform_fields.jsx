@@ -12,7 +12,7 @@ import { putBlob, listFiles} from '../services/azureBlob.js';
 
 
 
-
+/*
 // ---------------------------------------------------------------------------------------------------
 export class FieldAttachment extends Component {
   constructor(props) {
@@ -22,9 +22,6 @@ export class FieldAttachment extends Component {
     };
   }
 
-  /*******************/
-  /* Common          */
-  /*******************/
   componentWillReceiveProps(nextProps) {
     //console.log ('Field componentWillReceiveProps ' + JSON.stringify(nextProps));
     if (nextProps.value !== this.props.value) {
@@ -72,9 +69,10 @@ export class FieldAttachment extends Component {
     }
   }
 }
+*/
 
 // ------------------------------------------------------------------------------------------
-export function FieldImage({fielddef, value, onChange, edit = false, inlist}) {
+export function FieldAttachment({fielddef, value, onChange, edit = false, inlist}) {
 
   const [ picFileList, setPicFileList ] = useState({state: "wait", records: []})
   const [ inputValue, setInputValue ] = useState(value)
@@ -82,7 +80,6 @@ export function FieldImage({fielddef, value, onChange, edit = false, inlist}) {
   const fileInputRef = useRef(null)
 
   const df = DynamicForm.instance
-
 
   // if prop value changes!
   useEffect(() => {
@@ -180,8 +177,8 @@ export function FieldImage({fielddef, value, onChange, edit = false, inlist}) {
         <div className="pic-with-text" style={{backgroundImage: "url("+img_src+")"}}>
           <header>
             <div style={{margin: "8px 30px"}}>
-              <button onClick={_clickFile}>upload new picture</button> |
-              <button onClick={_selectExisting}> select existing picture</button>
+              <button onClick={_clickFile}>upload new {fielddef.type}</button> |
+              <button onClick={_selectExisting}> select existing {fielddef.type}</button>
             </div>
             { // <div ref="progressline"></div>
             }
@@ -701,9 +698,7 @@ export function Field ({fielddef, value, edit, inlist, onChange}) {
   let field
   const df = DynamicForm.instance
 
-  if (fielddef.type === "image" ) {
-    field = (<FieldImage fielddef={fielddef} value={value} edit={edit} onChange={onChange} inlist={inlist}/>);
-  } else if (fielddef.type === 'attachment') {
+  if (fielddef.type === "image" || fielddef.type === 'attachment') {
     field = (<FieldAttachment fielddef={fielddef} value={value} edit={edit} onChange={onChange} inlist={inlist}/>);
   } else if (fielddef.type === "reference") {
     field = (<FieldReference fielddef={fielddef} value={value} edit={edit} onChange={onChange} inlist={inlist}/>);

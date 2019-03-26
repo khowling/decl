@@ -371,12 +371,12 @@ router.get('/loadApp', async function(req, res) {
 
       if (sendtoclient.app._id !== String(AdminApp._id)) {
         if (!sendtoclient.appMeta) sendtoclient.appMeta = []
-        sendtoclient.appMeta.push(MetaFormsById[String(MetaFormIds.iconSearch)]); // non-admin apps that need to work with icons
-        sendtoclient.appMeta.push(MetaFormsById[String(MetaFormIds.FormFieldMetadata)]); // required for dynamic fields
-        sendtoclient.appMeta.push(MetaFormsById[String(MetaFormIds.DropDownOption)]); // Apps with forms with dropdown fields
-
+        sendtoclient.appMeta.push(MetaFormsById[String(MetaFormIds.iconSearch)]) // non-admin apps that need to work with icons
+        sendtoclient.appMeta.push(MetaFormsById[String(MetaFormIds.FormFieldMetadata)]) // required for dynamic fields
+        sendtoclient.appMeta.push(MetaFormsById[String(MetaFormIds.DropDownOption)]) // Apps with forms with dropdown fields
+        sendtoclient.appMeta.push(MetaFormsById[String(MetaFormIds.FileMeta)]) // apps that need to work with files (list existing files)
         //context.appMeta.push(MetaFormsById[String(MetaFormIds.App)]); // apps that need to work with users app-specific dynamic fields
-        //systemMeta.push(MetaFormsById[String(MetaFormIds.FileMeta)]); // apps that need to work with files
+        //
         //systemMeta.push(MetaFormsById[String(MetaFormIds.iconSearch)]); // apps that need to work with icons
         //systemMeta.push(MetaFormsById[String(MetaFormIds.Users)]); // apps that need to work with users
         //systemMeta.push(MetaFormsById[String(MetaFormIds.AuthProviders)]); // apps that need to work user auth providers
